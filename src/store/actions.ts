@@ -7,6 +7,7 @@ export type Action =
   | { type: 'UPDATE_SEGMENT'; id: string; patch: Partial<Omit<Segment, 'id'>> }
   | { type: 'REMOVE_NODE'; id: string }
   | { type: 'SET_REPEAT'; id: string; count: number }
+  | { type: 'REORDER_NODES'; parentId: string | null; fromIndex: number; toIndex: number }
   | { type: 'SET_UNIT'; unit: DistanceUnit }
   | { type: 'SET_NAME'; name: string }
   | { type: 'CARRY_SIMPLE_SEGMENT'; seg: Segment }

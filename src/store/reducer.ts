@@ -34,6 +34,13 @@ function addToParent(nodes: WorkoutNode[], parentId: string | null, newNode: Wor
   });
 }
 
+function arrayMove<T>(arr: T[], from: number, to: number): T[] {
+  const result = [...arr];
+  const [item] = result.splice(from, 1);
+  result.splice(to, 0, item);
+  return result;
+}
+
 export function makeInitialWorkout(): Workout {
   return { id: uid(), name: 'My Workout', units: 'km', nodes: [] };
 }
@@ -67,6 +74,21 @@ export function reducer(state: Workout, action: Action): Workout {
 
     case 'REMOVE_NODE':
       return { ...state, nodes: removeNode(state.nodes, action.id) };
+
+    case 'REORDER_NODES': {
+      if (action.fromIndex === action.toIndex) return state;
+      if (action.parentId === null) {
+        return { ...state, nodes: arrayMove(state.nodes, action.fromIndex, action.toIndex) };
+      }
+      return {
+        ...state,
+        nodes: state.nodes.map(n =>
+          isRepeat(n) && n.id === action.parentId
+            ? { ...n, children: arrayMove(n.children, action.fromIndex, action.toIndex) }
+            : n
+        ),
+      };
+    }
 
     case 'SET_REPEAT':
       return {
