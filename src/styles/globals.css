@@ -1,0 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:            #0d0f14;
+  --surface:       #161920;
+  --surface-hi:    #1e2130;
+  --border:        #272b3a;
+  --border-subtle: #1a1d28;
+
+  --text-1: #e8eaf0;
+  --text-2: #8b90a4;
+  --text-3: #4a4f62;
+
+  /* Derived value: amber hero */
+  --amber:     #f59e0b;
+  --amber-bg:  rgba(245,158,11,0.08);
+  --amber-glow: 0 0 24px rgba(245,158,11,0.12);
+
+  /* Active input: blue */
+  --blue:    #3b82f6;
+  --blue-bg: rgba(59,130,246,0.08);
+
+  /* Segment type colors */
+  --run:  #10b981;
+  --walk: #8b5cf6;
+
+  /* Typography */
+  --font-num: 'JetBrains Mono', 'Fira Mono', 'Courier New', monospace;
+  --font-ui:  'Outfit', system-ui, sans-serif;
+
+  /* Radii & spacing */
+  --r-sm: 4px;
+  --r:    8px;
+  --r-lg: 12px;
+}
+
+html, body, #root {
+  height: 100%;
+  background: var(--bg);
+  color: var(--text-1);
+  font-family: var(--font-ui);
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tabular figures for all mono-font number displays */
+.num {
+  font-family: var(--font-num);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Utility: a single horizontal rule in the surface border color */
+.divider {
+  border: none;
+  border-top: 1px solid var(--border);
+}
+
+/* Focus ring — keyboard-visible only */
+:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Scrollbar style */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* Buttons base */
+button {
+  font-family: var(--font-ui);
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+/* Inputs base */
+input {
+  font-family: var(--font-num);
+  color: var(--text-1);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100%;
+}
+input::placeholder { color: var(--text-3); }
