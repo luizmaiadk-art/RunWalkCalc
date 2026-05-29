@@ -88,3 +88,14 @@ input {
   width: 100%;
 }
 input::placeholder { color: var(--text-3); }
+
+/* Minimum tap target size for mobile */
+button { min-height: 36px; min-width: 36px; }
+
+/* Prevent input zoom on iOS (font-size < 16px triggers zoom) */
+input { font-size: max(16px, 1em); }
+
+/* Full-bleed on narrow screens */
+@media (max-width: 480px) {
+  main { padding-bottom: 24px; }
+}
