@@ -21,7 +21,7 @@ export function SegmentRow({ segment, unit, depth = 0 }: Props) {
   }
 
   const style = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
   };
@@ -32,10 +32,11 @@ export function SegmentRow({ segment, unit, depth = 0 }: Props) {
         <button
           {...attributes}
           {...listeners}
+          aria-label="Drag to reorder"
           style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none', color: 'var(--text-3)', fontSize: 14, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
           title="Drag to reorder"
         >
-          ⠿
+          <span aria-hidden="true">⠿</span>
         </button>
         <span style={{ width: 6, height: 6, borderRadius: '50%', background: TYPE_COLOR[segment.type], flexShrink: 0 }} />
         <span style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', color: TYPE_COLOR[segment.type] }}>

@@ -30,7 +30,7 @@ export function RepeatBlockRow({ block, unit }: Props) {
   }
 
   const wrapperStyle = {
-    transform: CSS.Transform.toString(transform),
+    transform: CSS.Translate.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
     border: '1px solid var(--border)',
@@ -49,10 +49,11 @@ export function RepeatBlockRow({ block, unit }: Props) {
         <button
           {...attributes}
           {...listeners}
+          aria-label="Drag to reorder"
           style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none', color: 'var(--text-3)', fontSize: 14, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
           title="Drag to reorder"
         >
-          ⠿
+          <span aria-hidden="true">⠿</span>
         </button>
         <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-2)' }}>
           Repeat
