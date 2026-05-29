@@ -1,6 +1,9 @@
 import { RepeatBlock, DistanceUnit, isSegment } from '../engine/types';
 import { SegmentRow } from './SegmentRow';
 import { useWorkout } from '../store/context';
+import { useSortable, SortableContext, verticalListSortingStrategy, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { CSS } from '@dnd-kit/utilities';
 
 interface Props {
   block: RepeatBlock;
@@ -9,19 +12,48 @@ interface Props {
 
 export function RepeatBlockRow({ block, unit }: Props) {
   const { dispatch } = useWorkout();
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  function handleChildDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const ids = block.children.map(n => n.id);
+    const fromIndex = ids.indexOf(active.id as string);
+    const toIndex = ids.indexOf(over.id as string);
+    if (fromIndex === -1 || toIndex === -1) return;
+    dispatch({ type: 'REORDER_NODES', parentId: block.id, fromIndex, toIndex });
+  }
+
+  const wrapperStyle = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    border: '1px solid var(--border)',
+    borderRadius: 'var(--r-lg)',
+    overflow: 'hidden',
+  };
 
   return (
-    <div style={{
-      border: '1px solid var(--border)',
-      borderRadius: 'var(--r-lg)',
-      overflow: 'hidden',
-    }}>
+    <div ref={setNodeRef} style={wrapperStyle}>
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
         padding: '8px 12px',
         background: 'var(--surface-hi)',
         borderBottom: '1px solid var(--border)',
       }}>
+        <button
+          {...attributes}
+          {...listeners}
+          style={{ cursor: isDragging ? 'grabbing' : 'grab', touchAction: 'none', color: 'var(--text-3)', fontSize: 14, padding: '0 2px', lineHeight: 1, flexShrink: 0 }}
+          title="Drag to reorder"
+        >
+          ⠿
+        </button>
         <span style={{ fontSize: 11, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-2)' }}>
           Repeat
         </span>
@@ -61,11 +93,15 @@ export function RepeatBlockRow({ block, unit }: Props) {
       </div>
 
       <div style={{ padding: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
-        {block.children.map(child =>
-          isSegment(child) ? (
-            <SegmentRow key={child.id} segment={child} unit={unit} depth={1} />
-          ) : null
-        )}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleChildDragEnd}>
+          <SortableContext items={block.children.map(n => n.id)} strategy={verticalListSortingStrategy}>
+            {block.children.map(child =>
+              isSegment(child) ? (
+                <SegmentRow key={child.id} segment={child} unit={unit} depth={1} />
+              ) : null
+            )}
+          </SortableContext>
+        </DndContext>
         {block.children.length === 0 && (
           <p style={{ fontSize: 12, color: 'var(--text-3)', textAlign: 'center', padding: '8px 0' }}>
             No segments — add Run or Walk above
