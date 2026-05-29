@@ -5,6 +5,8 @@ import { SegmentRow } from './SegmentRow';
 import { RepeatBlockRow } from './RepeatBlockRow';
 import { TotalsPanel } from './TotalsPanel';
 import { RunWalkPreset } from './RunWalkPreset';
+import { usePersistence } from '../hooks/usePersistence';
+import { WorkoutList } from './WorkoutList';
 
 interface Props {
   unit: DistanceUnit;
@@ -13,6 +15,7 @@ interface Props {
 export function AdvancedMode({ unit }: Props) {
   const { workout, dispatch } = useWorkout();
   const [showPreset, setShowPreset] = useState(false);
+  const { saved, saveWorkout, deleteWorkout } = usePersistence();
 
   return (
     <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -81,6 +84,19 @@ export function AdvancedMode({ unit }: Props) {
           Clear workout
         </button>
       )}
+
+      <button
+        onClick={() => saveWorkout(workout.name, workout.nodes)}
+        style={{ alignSelf: 'flex-start', padding: '8px 16px', fontSize: 12, fontWeight: 600, color: 'var(--bg)', background: 'var(--amber)', borderRadius: 'var(--r)' }}
+      >
+        Save Workout
+      </button>
+
+      <WorkoutList
+        workouts={saved}
+        onLoad={w => dispatch({ type: 'LOAD_WORKOUT', nodes: w.nodes, name: w.name })}
+        onDelete={deleteWorkout}
+      />
     </div>
   );
 }
