@@ -7,6 +7,8 @@ import { TotalsPanel } from './TotalsPanel';
 import { RunWalkPreset } from './RunWalkPreset';
 import { usePersistence } from '../hooks/usePersistence';
 import { WorkoutList } from './WorkoutList';
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 interface Props {
   unit: DistanceUnit;
@@ -16,6 +18,21 @@ export function AdvancedMode({ unit }: Props) {
   const { workout, dispatch } = useWorkout();
   const [showPreset, setShowPreset] = useState(false);
   const { saved, saveWorkout, deleteWorkout } = usePersistence();
+
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  function handleDragEnd(event: DragEndEvent) {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const ids = workout.nodes.map(n => n.id);
+    const fromIndex = ids.indexOf(active.id as string);
+    const toIndex = ids.indexOf(over.id as string);
+    if (fromIndex === -1 || toIndex === -1) return;
+    dispatch({ type: 'REORDER_NODES', parentId: null, fromIndex, toIndex });
+  }
 
   return (
     <div style={{ padding: 16, display: 'flex', flexDirection: 'column', gap: 16 }}>
@@ -33,13 +50,17 @@ export function AdvancedMode({ unit }: Props) {
       <TotalsPanel nodes={workout.nodes} unit={unit} />
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {workout.nodes.map(node => (
-          isSegment(node)
-            ? <SegmentRow key={node.id} segment={node} unit={unit} />
-            : isRepeatBlock(node)
-            ? <RepeatBlockRow key={node.id} block={node} unit={unit} />
-            : null
-        ))}
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={workout.nodes.map(n => n.id)} strategy={verticalListSortingStrategy}>
+            {workout.nodes.map(node => (
+              isSegment(node)
+                ? <SegmentRow key={node.id} segment={node} unit={unit} />
+                : isRepeatBlock(node)
+                ? <RepeatBlockRow key={node.id} block={node} unit={unit} />
+                : null
+            ))}
+          </SortableContext>
+        </DndContext>
         {workout.nodes.length === 0 && (
           <p style={{ fontSize: 13, color: 'var(--text-3)', textAlign: 'center', padding: 24 }}>
             Add segments below to start building your workout
