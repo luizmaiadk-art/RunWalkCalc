@@ -3,24 +3,24 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg:            #0d0f14;
-  --surface:       #161920;
-  --surface-hi:    #1e2130;
-  --border:        #272b3a;
-  --border-subtle: #1a1d28;
+  --bg:            #f4f6fa;
+  --surface:       #ffffff;
+  --surface-hi:    #eef0f6;
+  --border:        #d0d4e2;
+  --border-subtle: #e4e7f0;
 
-  --text-1: #e8eaf0;
-  --text-2: #8b90a4;
-  --text-3: #4a4f62;
+  --text-1: #1a1d28;
+  --text-2: #565b73;
+  --text-3: #a0a5bc;
 
   /* Derived value: amber hero */
-  --amber:     #f59e0b;
-  --amber-bg:  rgba(245,158,11,0.08);
-  --amber-glow: 0 0 24px rgba(245,158,11,0.12);
+  --amber:     #d97706;
+  --amber-bg:  rgba(217,119,6,0.08);
+  --amber-glow: 0 0 24px rgba(217,119,6,0.10);
 
   /* Active input: blue */
-  --blue:    #3b82f6;
-  --blue-bg: rgba(59,130,246,0.08);
+  --blue:    #2563eb;
+  --blue-bg: rgba(37,99,235,0.08);
 
   /* Segment type colors */
   --run:  #10b981;
